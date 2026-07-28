@@ -5,8 +5,7 @@ ETL-пайплайн для сбора, трансформации и загру
 ---
 
 ## 📁 Структура проекта
-
-.
+```text
 ├── dags/                       # Модули для Airflow (монтируются в контейнер)
 │   ├── config.py
 │   ├── extract.py
@@ -30,7 +29,7 @@ ETL-пайплайн для сбора, трансформации и загру
 ├── main.py                     # Локальный запуск ETL без оркестратора
 ├── requirements.txt            # Python-зависимости
 └── transform.py                # Трансформация и обогащение данных
-
+```
 > **Примечание:** файлы `config.py`, `extract.py`, `load.py`, `transform.py` продублированы в папке `dags/`, чтобы DAG Airflow мог импортировать их напрямую при запуске внутри Docker.
 
 ---
@@ -73,7 +72,7 @@ AIRFLOW__WEBSERVER__SECRET_KEY=your_secret_key_here
 | `BATCH_SIZE`      | `10`                | Размер промежуточного батча при записи матчей |
 | `SAVE_FORMAT`     | `"parquet"`         | Формат выходных файлов: `csv` или `parquet`   |
 | `CHECKPOINT_FILE` | `"checkpoint.json"` | Файл для возобновления работы                 |
-
+```
 ---
 
 🚀 Быстрый старт
