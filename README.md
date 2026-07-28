@@ -75,15 +75,13 @@ AIRFLOW__WEBSERVER__SECRET_KEY=your_secret_key_here
 ```
 ---
 
-🚀 Быстрый старт
+## 🚀 Быстрый старт
 
 1. Локальный запуск (без Airflow)
 # Установка зависимостей
 pip install -r requirements.txt
-
 # Создайте .env и добавьте RIOT_API_KEY
 echo "RIOT_API_KEY=your_key_here" > .env
-
 # Запуск ETL
 python main.py
 
@@ -95,10 +93,8 @@ champions.parquet, items.parquet — справочники
 2. Запуск через Docker + Airflow
 # Инициализация базы Airflow
 docker compose --profile init up -d init
-
 # Запуск полного стека
 docker compose up -d
-
 # Веб-интерфейс Airflow
 open http://localhost:8080
 
@@ -106,4 +102,4 @@ DAG lol_etl_pipeline будет доступен в интерфейсе Airflow
 
 ---
 
-📊 Описание данных
+## 📊 Описание данных
