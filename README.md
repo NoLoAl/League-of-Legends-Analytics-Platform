@@ -91,8 +91,8 @@ players.parquet — данные игроков
 matches.csv / matches.parquet — детали матчей
 champions.parquet, items.parquet — справочники
 ```
-```
 ## 2. Запуск через Docker + Airflow
+```
 # Инициализация базы Airflow
 docker compose --profile init up -d init
 # Запуск полного стека
@@ -105,3 +105,57 @@ DAG lol_etl_pipeline будет доступен в интерфейсе Airflow
 ---
 
 ## 📊 Описание данных
+
+players.parquet
+| Поле              | Тип    | Описание                               |
+| ----------------- | ------ | -------------------------------------- |
+| `puu_id`          | string | Уникальный ID игрока                   |
+| `league_points`   | int    | Очки лиги                              |
+| `wins` / `losses` | int    | Победы / поражения                     |
+| `winrate_%`       | float  | Расчётный винрейт                      |
+| `matches_total`   | int    | Общее число игр                        |
+| `range`           | string | Лига (CHALLENGER, GRANDMASTER, MASTER) |
+| `region`          | string | Регион игрока                          |
+| `region_api`      | string | Регион для Match API                   |
+
+matches.parquet
+| Поле                           | Тип    | Описание                                    |
+| ------------------------------ | ------ | ------------------------------------------- |
+| `match_id`                     | string | ID матча                                    |
+| `puuid`                        | string | ID участника                                |
+| `champion`                     | string | Имя чемпиона                                |
+| `kills` / `deaths` / `assists` | int    | KDA                                         |
+| `gold_earned`                  | int    | Заработанное золото                         |
+| `damage_to_champions`          | int    | Урон по чемпионам                           |
+| `vision_score`                 | int    | Очки обзора                                 |
+| `team_position`                | string | Роль (TOP, JUNGLE, MIDDLE, BOTTOM, UTILITY) |
+| `game_duration_sec`            | int    | Длительность матча                          |
+| `item0` … `item5`              | int    | ID предметов                                |
+| `win`                          | bool   | Победа / поражение                          |
+
+---
+
+## 🛡️ Надёжность
+
+- Retry-логика — при ошибках сети запросы повторяются до 3 раз с экспоненциальным backoff и учётом заголовка Retry-After.
+- Чекпоинты (checkpoint.json) — если процесс прервётся, повторный запуск продолжит с места остановки. Уже обработанные матчи и игроки пропускаются.
+- Batch-запись — данные матчей сохраняются порциями (BATCH_SIZE), чтобы не терять прогресс при длительной загрузке.
+- Rate limiting — встроенная задержка (DELAY) между запросами для соблюдения лимитов Riot API.
+
+---
+
+## 🛠️ Стек технологий
+
+Python 3.10+
+Pandas / PyArrow — обработка и сохранение данных
+Requests — HTTP-клиент для API
+Apache Airflow 2.9 — оркестрация
+PostgreSQL 13 — метаданные Airflow
+Redis 7 — брокер сообщений
+Docker & Compose — контейнеризация
+
+---
+
+## ⚠️ Важно
+
+API-ключ Riot Games (Development Key) действует 24 часа. Обновляйте ключ в .env перед каждым запуском.
